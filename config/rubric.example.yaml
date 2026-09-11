@@ -1,0 +1,134 @@
+## salespulse — scoring rubric
+## Copy to config/rubric.yaml and customise for your sales methodology.
+## Criterion weights must sum to exactly 100.
+
+rubric:
+  name: "MEDDIC Enterprise"
+  methodology: "meddic"               # meddic | bant | custom
+  version: "1.0"
+
+  # ── Qualification criteria ──────────────────────────────────────────
+  # Each criterion is scored 0–3 by the LLM.
+  # evidence_required: true  →  score is forced to 0 if no quote provided.
+  # weight: percentage of the overall score (all weights must sum to 100).
+  # ───────────────────────────────────────────────────────────────────
+
+  criteria:
+    - id: metrics
+      label: "Metrics"
+      weight: 20
+      description: >
+        Rep established a quantified business impact: revenue gain, cost
+        reduction, time saved, or risk mitigated. A specific number must be
+        mentioned or elicited — not just acknowledged.
+      evidence_required: true
+      scoring_guide:
+        0: "No metrics discussed"
+        1: "Vague improvement mentioned — no number attached"
+        2: "Number mentioned but not qualified (no baseline or target)"
+        3: "Specific metric confirmed with both baseline and target"
+
+    - id: economic_buyer
+      label: "Economic Buyer"
+      weight: 20
+      description: >
+        Rep identified the person with final budget authority by name or title.
+        Proxy signals count: rep asked "who signs off?", prospect named a person,
+        or champion was asked to arrange a meeting with the decision-maker.
+      evidence_required: true
+      scoring_guide:
+        0: "Not discussed"
+        1: "Existence of a budget-holder acknowledged, not identified"
+        2: "Title identified — no name or access plan"
+        3: "Named, and a next step to involve them is defined"
+
+    - id: decision_criteria
+      label: "Decision Criteria"
+      weight: 15
+      description: >
+        Rep surfaced the prospect's evaluation scorecard: integration needs,
+        security requirements, pricing model preferences, onboarding timeline,
+        or compliance requirements.
+      evidence_required: true
+      scoring_guide:
+        0: "Not explored"
+        1: "One criterion mentioned passively by prospect"
+        2: "Multiple criteria surfaced through rep questioning"
+        3: "Criteria ranked by prospect; rep addressed the top two explicitly"
+
+    - id: decision_process
+      label: "Decision Process"
+      weight: 15
+      description: >
+        Rep mapped the internal buying steps: legal review, security audit,
+        board approval, procurement, or signature authority chain.
+      evidence_required: false
+      scoring_guide:
+        0: "Not explored"
+        1: "Timeline or deadline mentioned only"
+        2: "Steps named but owners not identified"
+        3: "Full process mapped with step owners and target dates"
+
+    - id: identify_pain
+      label: "Identify Pain"
+      weight: 15
+      description: >
+        Rep uncovered and confirmed a specific business pain — not a feature
+        wish. Pain must be connected to a consequence if left unsolved.
+        Surface-level "we'd like to improve X" does not qualify.
+      evidence_required: true
+      scoring_guide:
+        0: "No pain explored"
+        1: "Surface-level problem mentioned, not confirmed"
+        2: "Pain confirmed by prospect"
+        3: "Pain + consequence + urgency all confirmed by prospect"
+
+    - id: champion
+      label: "Champion"
+      weight: 15
+      description: >
+        Rep identified an internal advocate who will sell on their behalf.
+        Champion test: would this person present to the economic buyer
+        without the rep present?
+      evidence_required: false
+      scoring_guide:
+        0: "No champion identified"
+        1: "Friendly contact, no advocacy signals"
+        2: "Prospect volunteered to share internally or involve others"
+        3: "Explicit champion identified and next step to leverage them confirmed"
+
+  # ── Conversation metrics ─────────────────────────────────────────────
+  # Computed from transcript directly — not scored by the LLM.
+  # ─────────────────────────────────────────────────────────────────────
+
+  conversation_metrics:
+    - id: talk_ratio
+      label: "Rep talk time"
+      type: range
+      target_range: [0.38, 0.46]      # Rep should speak 38–46% of call time
+      flag_above: 0.55                # Flag if rep dominates the conversation
+      flag_below: 0.20                # Flag if rep is disengaged
+      description: >
+        Fraction of total call duration the rep was speaking.
+        Optimal: 38–46%. Top reps ask 3x more questions than average reps.
+
+    - id: next_step_confirmed
+      label: "Next step confirmed"
+      type: boolean
+      description: >
+        Call ended with a specific next action, a named date, and an
+        identified owner. "I'll send you something" does not qualify.
+
+    - id: objections_handled
+      label: "Objections handled"
+      type: count
+      description: >
+        Count of distinct objections raised by the prospect and addressed
+        by the rep. Unaddressed objections are tracked separately.
+
+    - id: competitor_mentions
+      label: "Competitor mentions"
+      type: list
+      description: >
+        Competitor names mentioned by either party. Populated from the
+        coaching.competitor_list in config.yaml.

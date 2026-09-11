@@ -1,0 +1,75 @@
+{
+  "call_id": "00000000-0000-0000-0000-000000000001",
+  "rubric_name": "MEDDIC Enterprise",
+  "rubric_version": "1.0",
+  "overall_score": 71,
+  "criteria_scores": [
+    {
+      "criterion_id": "metrics",
+      "label": "Metrics",
+      "score": 2,
+      "weight": 20,
+      "evidence": "Prospect said at 00:15: 'close rate dropped from 28 to 19 percent over six months'",
+      "timestamp": "00:15",
+      "flag": null
+    },
+    {
+      "criterion_id": "economic_buyer",
+      "label": "Economic Buyer",
+      "score": 3,
+      "weight": 20,
+      "evidence": "Prospect said at 01:32: 'Sarah Chen — she's our VP of Sales — she'd need to approve the budget'",
+      "timestamp": "01:32",
+      "flag": null
+    },
+    {
+      "criterion_id": "decision_criteria",
+      "label": "Decision Criteria",
+      "score": 2,
+      "weight": 15,
+      "evidence": "Prospect said at 02:15: 'she likes to see results on real calls before committing. We'd also need a security review from IT'",
+      "timestamp": "02:15",
+      "flag": null
+    },
+    {
+      "criterion_id": "decision_process",
+      "label": "Decision Process",
+      "score": 2,
+      "weight": 15,
+      "evidence": null,
+      "timestamp": null,
+      "flag": null
+    },
+    {
+      "criterion_id": "identify_pain",
+      "label": "Identify Pain",
+      "score": 3,
+      "weight": 15,
+      "evidence": "Prospect said at 00:53: 'Reps are moving deals forward without really qualifying them. We don't have visibility into what's being said on calls'",
+      "timestamp": "00:53",
+      "flag": null
+    },
+    {
+      "criterion_id": "champion",
+      "label": "Champion",
+      "score": 1,
+      "weight": 15,
+      "evidence": null,
+      "timestamp": null,
+      "flag": "low_score"
+    }
+  ],
+  "conversation_metrics": {
+    "talk_ratio": 0.52,
+    "next_step_confirmed": true,
+    "objections_handled": 0,
+    "competitor_mentions": [],
+    "talk_ratio_flag": null
+  },
+  "coaching_flags": [
+    "Champion not identified — ask 'Would you be comfortable presenting this to Sarah on our behalf?'",
+    "Rep talk ratio 52% — slightly above optimal 46%. Ask more open questions in discovery.",
+    "Metrics score 2/3 — numbers surfaced but no target confirmed. Ask 'What would success look like in 6 months?'"
+  ],
+  "overall_notes": "Strong discovery call. Economic buyer named, pain confirmed with consequence, clear next step. Champion and target metrics need to be developed in the next call."
+}

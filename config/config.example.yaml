@@ -1,0 +1,142 @@
+## salespulse — configuration reference
+## Copy to config/config.yaml and set values before starting.
+## All secrets go in .env — never put API keys in this file.
+
+# ─────────────────────────────────────────────────────────
+# API server
+# ─────────────────────────────────────────────────────────
+server:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 2                          # Uvicorn worker processes
+  log_level: "info"                   # debug | info | warning | error
+  cors_origins:                       # Allowed CORS origins for browser clients
+    - "http://localhost:3000"
+
+# ─────────────────────────────────────────────────────────
+# Database
+# ─────────────────────────────────────────────────────────
+database:
+  url: "${DATABASE_URL}"              # Set in .env: postgresql+asyncpg://...
+  pool_size: 10
+  max_overflow: 20
+
+# ─────────────────────────────────────────────────────────
+# Task queue
+# ─────────────────────────────────────────────────────────
+celery:
+  broker_url: "${REDIS_URL}"          # Set in .env: redis://redis:6379/0
+  result_backend: "${REDIS_URL}"
+  task_serializer: "json"
+  result_expires: 86400               # Seconds — results kept in Redis for 1 day
+
+# ─────────────────────────────────────────────────────────
+# Audio pipeline
+# ─────────────────────────────────────────────────────────
+pipeline:
+  max_audio_duration_minutes: 120     # Reject files longer than this
+  audio_sample_rate: 16000            # Hz — required by Whisper; audio is
+                                      # resampled automatically if different
+  storage_path: "/data/audio"         # Where uploaded audio is stored on disk
+                                      # Mount a volume here in production
+  retry_attempts: 3                   # Per-stage retry count on failure
+  retry_backoff_seconds: 30           # Initial backoff; doubles each retry
+
+# ─────────────────────────────────────────────────────────
+# ASR (speech-to-text)
+# ─────────────────────────────────────────────────────────
+asr:
+  provider: "whisper_local"           # whisper_local | deepgram | assemblyai
+                                      # whisper_local: no data leaves the server
+                                      # deepgram / assemblyai: require DPA for EU use
+
+  # Whisper local settings (only used when provider=whisper_local)
+  whisper_model: "large-v3"           # tiny | base | small | medium | large-v3
+                                      # large-v3: best accuracy, highest compute
+                                      # small: ~4x faster, ~3% higher WER
+  compute_type: "int8"                # int8 for CPU (fast), float16 for GPU
+  device: "auto"                      # auto | cpu | cuda
+
+  # Managed provider settings (only used when provider=deepgram or assemblyai)
+  # API keys are read from DEEPGRAM_API_KEY / ASSEMBLYAI_API_KEY in .env
+  language: null                      # null = auto-detect, or ISO 639-1 e.g. "en"
+
+# ─────────────────────────────────────────────────────────
+# Speaker diarization
+# ─────────────────────────────────────────────────────────
+diarization:
+  enabled: true
+  min_speakers: 2                     # Minimum number of distinct speakers expected
+  max_speakers: 4                     # Maximum — caps the clustering search space
+  # HuggingFace token required to download pyannote/speaker-diarization-3.1
+  # Set HF_TOKEN in .env
+  speaker_name_map:                   # Map anonymous IDs to role labels
+    SPEAKER_00: "rep"                 # The speaker with higher talk time at start
+    SPEAKER_01: "prospect"            # Adjust if your calls differ
+
+# ─────────────────────────────────────────────────────────
+# Scoring (LLM)
+# ─────────────────────────────────────────────────────────
+scoring:
+  llm_provider: "openai"              # openai | anthropic | ollama
+  llm_model: "gpt-4o"                 # Provider-specific model name
+                                      # openai: gpt-4o | gpt-4o-mini
+                                      # anthropic: claude-3-5-sonnet-20241022
+                                      # ollama: llama3.1 (needs local GPU)
+  temperature: 0.1                    # Low = deterministic; do not raise above 0.3
+  max_tokens: 2048                    # Response token limit; increase for long calls
+  rubric_path: "config/rubric.yaml"   # Path to the active scoring rubric
+  evidence_required: true             # Reject scores with no transcript evidence
+                                      # Set false only for testing
+
+# ─────────────────────────────────────────────────────────
+# Coaching engine
+# ─────────────────────────────────────────────────────────
+coaching:
+  min_calls_for_pattern: 5            # Suppress flags until rep has this many calls
+  underperformer_threshold: 55        # Overall score below this triggers WARN flag
+  talk_ratio_min: 0.38                # Rep talk below this = disengaged flag
+  talk_ratio_max: 0.55                # Rep talk above this = dominating flag
+  next_step_miss_rate_threshold: 0.40 # Flag if > 40% of calls lack next step
+  competitor_list:                    # Names to detect in transcript (case-insensitive)
+    - "Gong"
+    - "Chorus"
+    - "Salesloft"
+    - "Outreach"
+    - "HubSpot"
+    - "Salesforce"
+
+# ─────────────────────────────────────────────────────────
+# CRM integration
+# ─────────────────────────────────────────────────────────
+crm:
+  adapter: "hubspot"                  # hubspot | salesforce | pipedrive | webhook
+                                      # Credentials are read from .env
+
+  # HubSpot (adapter=hubspot)
+  hubspot_portal_id: ""               # Your HubSpot portal ID (numeric)
+
+  # Salesforce (adapter=salesforce)
+  salesforce_instance_url: ""         # e.g. https://myorg.my.salesforce.com
+
+  # Pipedrive (adapter=pipedrive)
+  pipedrive_domain: ""                # Your Pipedrive subdomain
+
+  # Generic webhook (adapter=webhook)
+  webhook_url: ""                     # POST target for scored call events
+  webhook_sign_secret: ""             # HMAC-SHA256 signing secret (optional)
+
+# ─────────────────────────────────────────────────────────
+# Voice agent (optional outbound calling layer)
+# ─────────────────────────────────────────────────────────
+voice_agent:
+  enabled: false                      # Set true to activate the /voice/* routes
+  twilio_phone_number: ""             # Your Twilio number in E.164 e.g. +15551234567
+  max_call_duration_minutes: 15       # Hard ceiling; agent hangs up after this
+  max_turns: 20                       # LLM turn limit per call
+
+  tts_provider: "elevenlabs"          # elevenlabs | google | azure
+  tts_voice_id: ""                    # Provider-specific voice ID
+
+  # Call script path — Jinja2 template rendered with lead_data at call start
+  call_script_path: "config/call_script.example.txt"

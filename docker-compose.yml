@@ -1,0 +1,101 @@
+services:
+
+  # ── PostgreSQL ───────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: salespulse
+      POSTGRES_PASSWORD: salespulse
+      POSTGRES_DB: salespulse
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U salespulse"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis (broker + result backend) ─────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── Database migrations ──────────────────────────────────────────────
+  migrate:
+    build: .
+    command: alembic upgrade head
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://salespulse:salespulse@db:5432/salespulse
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"   # Run once and exit
+
+  # ── API server ───────────────────────────────────────────────────────
+  api:
+    build: .
+    command: uvicorn salespulse.api.app:create_app --factory --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://salespulse:salespulse@db:5432/salespulse
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./src:/app/src          # Hot reload in development
+      - ./config:/app/config
+      - audio_data:/data/audio
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ── Celery worker: ASR (CPU/GPU intensive) ───────────────────────────
+  worker-asr:
+    build: .
+    command: celery -A salespulse.pipeline.celery_app:app worker -Q asr,diarize -c 1 --loglevel=info
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://salespulse:salespulse@db:5432/salespulse
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - audio_data:/data/audio
+      - model_cache:/root/.cache   # Whisper + pyannote model cache
+    depends_on:
+      - redis
+      - db
+
+  # ── Celery worker: scoring + CRM (I/O bound) ────────────────────────
+  worker-score:
+    build: .
+    command: celery -A salespulse.pipeline.celery_app:app worker -Q score,coaching,crm_push -c 4 --loglevel=info
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://salespulse:salespulse@db:5432/salespulse
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
+      - db
+
+  # ── Flower (Celery monitoring) ───────────────────────────────────────
+  flower:
+    build: .
+    command: celery -A salespulse.pipeline.celery_app:app flower --port=5555
+    ports:
+      - "5555:5555"
+    env_file: .env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
+
+volumes:
+  pg_data:
+  audio_data:
+  model_cache:

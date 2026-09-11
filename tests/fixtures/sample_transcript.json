@@ -1,0 +1,100 @@
+{
+  "call_id": "00000000-0000-0000-0000-000000000001",
+  "language": "en",
+  "duration_seconds": 183.4,
+  "asr_provider": "whisper_local",
+  "rep_speaker_id": "rep",
+  "turns": [
+    {
+      "position": 0,
+      "speaker": "rep",
+      "start": 2.1,
+      "end": 14.8,
+      "text": "Good morning, thanks so much for making time today. I know you mentioned last week you're looking at ways to improve your team's close rate. Is that still the main focus?",
+      "words": [
+        {"word": "Good", "start": 2.1, "end": 2.4, "confidence": 0.99, "speaker": "rep"},
+        {"word": "morning", "start": 2.4, "end": 2.9, "confidence": 0.99, "speaker": "rep"}
+      ]
+    },
+    {
+      "position": 1,
+      "speaker": "prospect",
+      "start": 15.3,
+      "end": 34.6,
+      "text": "Yes exactly. We've had a rough quarter — close rate dropped from 28 to 19 percent over six months and I'm getting pressure from the VP to turn that around before end of year.",
+      "words": []
+    },
+    {
+      "position": 2,
+      "speaker": "rep",
+      "start": 35.1,
+      "end": 52.3,
+      "text": "That's a meaningful drop. So going from 28 to 19 — what do you think is the biggest single driver? Is it happening at a specific stage in the pipeline?",
+      "words": []
+    },
+    {
+      "position": 3,
+      "speaker": "prospect",
+      "start": 53.0,
+      "end": 74.2,
+      "text": "Mostly at the discovery stage. Reps are moving deals forward without really qualifying them. We don't have visibility into what's being said on calls, so we can't coach at scale.",
+      "words": []
+    },
+    {
+      "position": 4,
+      "speaker": "rep",
+      "start": 74.8,
+      "end": 91.5,
+      "text": "Got it. And who would ultimately make the call on a solution like this — is that you, or does it involve your VP as well?",
+      "words": []
+    },
+    {
+      "position": 5,
+      "speaker": "prospect",
+      "start": 92.0,
+      "end": 112.7,
+      "text": "It'd be a joint decision. I can evaluate and recommend, but Sarah Chen — she's our VP of Sales — she'd need to approve the budget. She's very data-driven, so I'd need solid numbers to bring to her.",
+      "words": []
+    },
+    {
+      "position": 6,
+      "speaker": "rep",
+      "start": 113.2,
+      "end": 134.8,
+      "text": "That makes sense. What does Sarah's evaluation process typically look like? Does she prefer a live demo, or more of a written business case first?",
+      "words": []
+    },
+    {
+      "position": 7,
+      "speaker": "prospect",
+      "start": 135.3,
+      "end": 152.1,
+      "text": "Usually a pilot first — she likes to see results on real calls before committing. We'd also need a security review from IT, that typically takes two to three weeks.",
+      "words": []
+    },
+    {
+      "position": 8,
+      "speaker": "rep",
+      "start": 152.6,
+      "end": 171.4,
+      "text": "Perfect. So if we could run a two-week pilot on your team's calls and show a measurable uplift in qualification scores, that would give you what you need to take it to Sarah?",
+      "words": []
+    },
+    {
+      "position": 9,
+      "speaker": "prospect",
+      "start": 171.9,
+      "end": 182.0,
+      "text": "Yes, I think that would work. I can probably get five reps to participate in a pilot.",
+      "words": []
+    },
+    {
+      "position": 10,
+      "speaker": "rep",
+      "start": 182.4,
+      "end": 183.4,
+      "text": "Great — let me send over the pilot setup doc today and we can get on a call Thursday to align on the cohort. Does 2pm work?",
+      "words": []
+    }
+  ]
+}
