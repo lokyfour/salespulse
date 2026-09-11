@@ -22,7 +22,7 @@ jobs:
         run: pip install ruff pyright pyyaml
 
       - name: Ruff lint
-        run: ruff check src/ tests/
+        run: ruff check src/ tests/ --select E,F,I,UP --ignore UP042
 
       - name: Ruff format check
         run: ruff format --check src/ tests/
