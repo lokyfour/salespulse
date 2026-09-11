@@ -12,7 +12,6 @@ from __future__ import annotations
 from ..transcript.models import Transcript
 from .rubric import RubricConfig
 
-
 _SYSTEM = """\
 You are an expert sales quality evaluator. Your job is to score a sales call \
 transcript against a provided rubric.

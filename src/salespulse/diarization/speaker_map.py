@@ -27,8 +27,9 @@ class SpeakerMapConfig:
     Maps raw diarization labels to semantic names.
     Loaded from config.yaml `diarization.speaker_name_map`.
     """
-    explicit_map: dict[str, str]        # e.g. {"SPEAKER_00": "rep"}
-    use_heuristic: bool = True          # Fall back to talk-ratio heuristic
+
+    explicit_map: dict[str, str]  # e.g. {"SPEAKER_00": "rep"}
+    use_heuristic: bool = True  # Fall back to talk-ratio heuristic
 
 
 def resolve_speakers(

@@ -25,10 +25,10 @@ Interface:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 
-class CallOutcomeSignal(str, Enum):
+class CallOutcomeSignal(StrEnum):
     CONTINUE = "continue"
     APPOINTMENT_BOOKED = "appointment_booked"
     VOICEMAIL = "voicemail"
@@ -40,8 +40,9 @@ class CallOutcomeSignal(str, Enum):
 @dataclass
 class AgentConfig:
     """Configuration for one outbound call campaign."""
-    call_script: str          # System prompt defining agent persona and goal
-    max_turns: int = 20       # Hard cap on conversation turns
+
+    call_script: str  # System prompt defining agent persona and goal
+    max_turns: int = 20  # Hard cap on conversation turns
     llm_model: str = "gpt-4o"
     tts_provider: str = "elevenlabs"
     tts_voice_id: str = ""
@@ -51,19 +52,21 @@ class AgentConfig:
 @dataclass
 class AgentResponse:
     """Output of one agent turn."""
-    text: str                           # Text to synthesise
-    outcome_signal: CallOutcomeSignal   # What the agent decided
-    tool_called: str | None = None      # Tool name if a tool was invoked
-    tool_result: dict | None = None     # Tool execution result
+
+    text: str  # Text to synthesise
+    outcome_signal: CallOutcomeSignal  # What the agent decided
+    tool_called: str | None = None  # Tool name if a tool was invoked
+    tool_result: dict | None = None  # Tool execution result
 
 
 @dataclass
 class SessionState:
     """Compact state summary passed to the LLM each turn."""
+
     turn_count: int
     prospect_name: str
     outcome_signals_so_far: list[CallOutcomeSignal]
-    recent_history: list[dict]   # Last 6 turns [{role, content}]
+    recent_history: list[dict]  # Last 6 turns [{role, content}]
 
 
 class VoiceAgent:

@@ -18,7 +18,7 @@ from dataclasses import dataclass
 
 @dataclass
 class LLMConfig:
-    provider: str       # "openai" | "anthropic" | "ollama"
+    provider: str  # "openai" | "anthropic" | "ollama"
     model: str
     temperature: float = 0.1
     max_tokens: int = 2048
@@ -113,10 +113,7 @@ def get_scorer(config: LLMConfig) -> LLMScorer:
         "ollama": OllamaScorerBackend,
     }
     if config.provider not in backends:
-        raise ValueError(
-            f"Unknown LLM provider '{config.provider}'. "
-            f"Choose from: {list(backends)}"
-        )
+        raise ValueError(f"Unknown LLM provider '{config.provider}'. Choose from: {list(backends)}")
     return backends[config.provider](config)
 
 

@@ -24,8 +24,6 @@ from __future__ import annotations
 
 from fastapi import WebSocket
 
-from .session import VoiceAgentSession
-
 
 async def handle_stream(websocket: WebSocket) -> None:
     """

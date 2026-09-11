@@ -13,8 +13,8 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import String, DateTime, Integer, Float, Boolean, Text, ForeignKey, func
-from sqlalchemy.dialects.postgresql import UUID, ARRAY
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, func
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .call import Base
@@ -40,14 +40,14 @@ class Scorecard(Base):
     talk_ratio: Mapped[float] = mapped_column(Float, nullable=False)
     next_step_confirmed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     objections_handled: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    competitor_mentions: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False, default=list)
-
-    overall_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
+    competitor_mentions: Mapped[list[str]] = mapped_column(
+        ARRAY(String), nullable=False, default=list
     )
 
-    criterion_scores: Mapped[list["CriterionScore"]] = relationship(
+    overall_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    criterion_scores: Mapped[list[CriterionScore]] = relationship(
         "CriterionScore", back_populates="scorecard", cascade="all, delete-orphan"
     )
 
@@ -69,4 +69,4 @@ class CriterionScore(Base):
     evidence_timestamp: Mapped[str | None] = mapped_column(String(20), nullable=True)
     flag: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
-    scorecard: Mapped["Scorecard"] = relationship("Scorecard", back_populates="criterion_scores")
+    scorecard: Mapped[Scorecard] = relationship("Scorecard", back_populates="criterion_scores")

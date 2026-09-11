@@ -13,7 +13,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..schemas import RepDashboardResponse, CoachingFlagResponse
+from ..schemas import CoachingFlagResponse, RepDashboardResponse
 
 router = APIRouter(prefix="/reps", tags=["reps"])
 

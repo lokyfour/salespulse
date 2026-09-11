@@ -26,11 +26,12 @@ from .diarizer import DiarizedSegment
 @dataclass
 class AttributedWord:
     """A single word with speaker attribution and timing."""
+
     word: str
     start: float
     end: float
     confidence: float
-    speaker_id: str   # "SPEAKER_00" | "SPEAKER_01" | "unknown"
+    speaker_id: str  # "SPEAKER_00" | "SPEAKER_01" | "unknown"
 
 
 def align(

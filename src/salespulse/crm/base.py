@@ -23,15 +23,15 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from uuid import UUID
 
-from ..scoring.scorecard import Scorecard
 from ..coaching.pattern_detector import CoachingFlag
+from ..scoring.scorecard import Scorecard
 
 
 @dataclass
 class CRMPushResult:
     success: bool
-    crm_record_id: str | None   # ID of created/updated CRM record
-    error_message: str | None   # None on success
+    crm_record_id: str | None  # ID of created/updated CRM record
+    error_message: str | None  # None on success
 
 
 class CRMAdapter(ABC):
@@ -96,4 +96,5 @@ class CRMAdapter(ABC):
 
 class CRMError(Exception):
     """Raised when a CRM push fails after retries."""
+
     pass

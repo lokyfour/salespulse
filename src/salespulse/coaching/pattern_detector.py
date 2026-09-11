@@ -21,30 +21,30 @@ Interface:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 from .aggregator import RepHistory
 
 
-class FlagSeverity(str, Enum):
-    INFO = "info"       # Observation, no action required
-    WARN = "warn"       # Worth a 1:1 conversation
+class FlagSeverity(StrEnum):
+    INFO = "info"  # Observation, no action required
+    WARN = "warn"  # Worth a 1:1 conversation
     CRITICAL = "critical"  # Manager review recommended
 
 
 @dataclass
 class CoachingFlag:
     severity: FlagSeverity
-    criterion_id: str | None   # Which criterion, if applicable
-    title: str                 # Short flag title
-    recommendation: str        # Actionable plain-English coaching tip
-    evidence_summary: str      # e.g. "Missed on 7 of last 10 calls"
+    criterion_id: str | None  # Which criterion, if applicable
+    title: str  # Short flag title
+    recommendation: str  # Actionable plain-English coaching tip
+    evidence_summary: str  # e.g. "Missed on 7 of last 10 calls"
 
 
 @dataclass
 class PatternConfig:
     min_calls_for_pattern: int = 5
-    criterion_weak_threshold: float = 1.0   # Average score below this
+    criterion_weak_threshold: float = 1.0  # Average score below this
     underperformer_overall_threshold: int = 55
     next_step_miss_rate_threshold: float = 0.40
     talk_ratio_min: float = 0.38

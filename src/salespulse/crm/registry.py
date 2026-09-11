@@ -20,10 +20,9 @@ from typing import Any
 
 from .base import CRMAdapter
 from .hubspot import HubSpotAdapter
-from .salesforce import SalesforceAdapter
 from .pipedrive import PipedriveAdapter
+from .salesforce import SalesforceAdapter
 from .webhook import WebhookAdapter
-
 
 _REGISTRY: dict[str, type[CRMAdapter]] = {
     "hubspot": HubSpotAdapter,

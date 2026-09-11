@@ -27,9 +27,9 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from .base import CRMAdapter, CRMPushResult
-from ..scoring.scorecard import Scorecard
 from ..coaching.pattern_detector import CoachingFlag
+from ..scoring.scorecard import Scorecard
+from .base import CRMAdapter, CRMPushResult
 
 
 class WebhookAdapter(CRMAdapter):

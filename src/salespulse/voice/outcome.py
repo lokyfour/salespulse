@@ -30,11 +30,11 @@ class SessionResult:
     started_at: datetime
     ended_at: datetime
     duration_seconds: float
-    turns: list[dict]              # [{speaker, text, timestamp}]
+    turns: list[dict]  # [{speaker, text, timestamp}]
     outcome: CallOutcomeSignal
-    appointment_id: str | None     # Set when outcome=APPOINTMENT_BOOKED
-    lead_data: dict                # Original lead data passed to session
-    raw_transcript: str            # Full text, line-per-turn
+    appointment_id: str | None  # Set when outcome=APPOINTMENT_BOOKED
+    lead_data: dict  # Original lead data passed to session
+    raw_transcript: str  # Full text, line-per-turn
 
 
 @dataclass
@@ -45,7 +45,7 @@ class CallIngestionPayload:
     call_sid: str = ""
     rep_id: str = ""
     crm_deal_id: str | None = None
-    transcript_text: str = ""     # Pre-transcribed — skips ASR stage
+    transcript_text: str = ""  # Pre-transcribed — skips ASR stage
     duration_seconds: float = 0.0
     outcome: str = ""
     metadata: dict = field(default_factory=dict)

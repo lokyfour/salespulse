@@ -18,7 +18,6 @@ DEEPGRAM_API_KEY or HF_TOKEN is set.
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
 import os
 import uuid
@@ -37,7 +36,7 @@ MOCK_ASR = os.environ.get("MOCK_ASR", "true").lower() == "true"
 
 # ── In-memory call store for mock pipeline ────────────────────────────────────
 # Production: replace with PostgreSQL reads via SQLAlchemy.
-_call_store: dict[str, dict] = {}       # call_id → {audio_path, rep_id, ...}
+_call_store: dict[str, dict] = {}  # call_id → {audio_path, rep_id, ...}
 _transcript_store: dict[str, object] = {}  # call_id → Transcript
 
 
@@ -63,6 +62,7 @@ def enqueue_call(
 
 # ── Stage 1: ASR ──────────────────────────────────────────────────────────────
 
+
 @app.task(
     bind=True,
     queue="asr",
@@ -81,8 +81,8 @@ def transcribe_audio(self, call_id: str) -> dict:
             _call_store.setdefault(call_id, {})["_mock_asr"] = True
         else:
             # Real path: load audio, run ASR provider
-            from ..asr.registry import ASRRegistry
             from ..asr.base import ASRConfig
+            from ..asr.registry import ASRRegistry
 
             meta = _call_store[call_id]
             provider = ASRRegistry.get(
@@ -106,6 +106,7 @@ def transcribe_audio(self, call_id: str) -> dict:
 
 # ── Stage 2: Diarization ──────────────────────────────────────────────────────
 
+
 @app.task(
     bind=True,
     queue="diarize",
@@ -120,9 +121,9 @@ def diarize_audio(self, call_id: str) -> dict:
 
         if not MOCK_ASR:
             # Real path: run pyannote diarization
-            from ..diarization.diarizer import Diarizer, DiarizationConfig
             from ..diarization.aligner import align
-            from ..diarization.speaker_map import resolve_speakers, SpeakerMapConfig
+            from ..diarization.diarizer import DiarizationConfig, Diarizer
+            from ..diarization.speaker_map import SpeakerMapConfig, resolve_speakers
 
             meta = _call_store[call_id]
             raw = meta["_raw_transcript"]
@@ -152,6 +153,7 @@ def diarize_audio(self, call_id: str) -> dict:
 
 # ── Stage 3: Normalise ────────────────────────────────────────────────────────
 
+
 @app.task(
     bind=True,
     queue="score",
@@ -166,10 +168,12 @@ def normalise_transcript(self, call_id: str) -> dict:
 
         if MOCK_ASR:
             from ..transcript.normaliser import normalise_from_fixture
+
             fixture = FIXTURE_DIR / "sample_transcript.json"
             transcript = normalise_from_fixture(fixture, uuid.UUID(call_id))
         else:
-            from ..transcript.normaliser import normalise, NormaliserConfig
+            from ..transcript.normaliser import NormaliserConfig, normalise
+
             meta = _call_store[call_id]
             raw = meta["_raw_transcript"]
             transcript = normalise(
@@ -195,6 +199,7 @@ def normalise_transcript(self, call_id: str) -> dict:
 
 # ── Stage 4: Score ────────────────────────────────────────────────────────────
 
+
 @app.task(
     bind=True,
     queue="score",
@@ -216,13 +221,13 @@ def score_transcript(self, call_id: str) -> dict:
 
         # Load rubric
         from ..scoring.rubric import load_rubric
-        rubric_path = Path(
-            os.environ.get("RUBRIC_PATH", "config/rubric.example.yaml")
-        )
+
+        rubric_path = Path(os.environ.get("RUBRIC_PATH", "config/rubric.example.yaml"))
         rubric = load_rubric(rubric_path)
 
         # Compute rule-based metrics
-        from ..scoring.metrics import compute_metrics, MetricsConfig
+        from ..scoring.metrics import MetricsConfig, compute_metrics
+
         competitor_list = os.environ.get(
             "COMPETITOR_LIST", "Gong,Chorus,Salesloft,Outreach,HubSpot,Salesforce"
         ).split(",")
@@ -230,10 +235,12 @@ def score_transcript(self, call_id: str) -> dict:
 
         # Build LLM prompt
         from ..scoring.prompt_builder import build_prompt
+
         system_prompt, user_prompt = build_prompt(transcript, rubric)
 
         # Call LLM
-        from ..scoring.llm_scorer import get_scorer, LLMConfig
+        from ..scoring.llm_scorer import LLMConfig, get_scorer
+
         llm_config = LLMConfig(
             provider=os.environ.get("LLM_PROVIDER", "openai"),
             model=os.environ.get("LLM_MODEL", "gpt-4o"),
@@ -255,11 +262,14 @@ def score_transcript(self, call_id: str) -> dict:
 
         # Build and validate Scorecard
         from ..scoring.scorecard import build_scorecard
+
         scorecard = build_scorecard(raw_scorecard, rubric, uuid.UUID(call_id), transcript)
 
         logger.info(
             "Scored call %s: overall=%d, flags=%d",
-            call_id, scorecard.overall_score, len(scorecard.coaching_flags),
+            call_id,
+            scorecard.overall_score,
+            len(scorecard.coaching_flags),
         )
 
         # Store in memory for downstream tasks
@@ -281,6 +291,7 @@ def score_transcript(self, call_id: str) -> dict:
 
 
 # ── Stage 5: Coaching ─────────────────────────────────────────────────────────
+
 
 @app.task(
     bind=True,
@@ -311,6 +322,7 @@ def generate_coaching(self, call_id: str) -> dict:
 
 # ── Stage 6: CRM push ─────────────────────────────────────────────────────────
 
+
 @app.task(
     bind=True,
     queue="crm_push",
@@ -327,6 +339,7 @@ def push_to_crm(self, call_id: str) -> dict:
 
         if crm_adapter and scorecard:
             from ..crm.registry import CRMRegistry
+
             try:
                 adapter = CRMRegistry.get(crm_adapter)
                 crm_deal_id = _call_store[call_id].get("crm_deal_id")
@@ -335,18 +348,20 @@ def push_to_crm(self, call_id: str) -> dict:
                 )
                 logger.info(
                     "CRM push for call %s: success=%s record_id=%s",
-                    call_id, result.success, result.crm_record_id,
+                    call_id,
+                    result.success,
+                    result.crm_record_id,
                 )
             except NotImplementedError:
                 logger.info(
                     "CRM adapter '%s' not implemented yet — scorecard for call %s "
                     "logged only (score %d)",
-                    crm_adapter, call_id, scorecard.overall_score,
+                    crm_adapter,
+                    call_id,
+                    scorecard.overall_score,
                 )
         else:
-            logger.info(
-                "CRM_ADAPTER not set — scorecard for call %s logged only", call_id
-            )
+            logger.info("CRM_ADAPTER not set — scorecard for call %s logged only", call_id)
 
         advance(uuid.UUID(call_id), PipelineStage.COMPLETE)
         return {"call_id": call_id, "status": "complete"}
@@ -361,12 +376,14 @@ def push_to_crm(self, call_id: str) -> dict:
 
 # ── Public helpers ────────────────────────────────────────────────────────────
 
+
 def get_call_result(call_id: str) -> dict:
     """
     Return the current state and scorecard for a call.
     Used by the API status endpoint.
     """
-    from .state import get_stage, get_error
+    from .state import get_error
+
     try:
         stage = get_stage(uuid.UUID(call_id))
     except KeyError:

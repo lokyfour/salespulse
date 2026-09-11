@@ -9,10 +9,9 @@ from __future__ import annotations
 import asyncio
 import os
 import tempfile
-import uuid
 from pathlib import Path
 
-from fastapi import BackgroundTasks, FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -50,6 +49,7 @@ def create_app() -> FastAPI:
         background.add_task(os.unlink, tmp_path)
 
         from ..pipeline.tasks import enqueue_call
+
         call_id = enqueue_call(
             audio_path=tmp_path,
             rep_id=rep_id,
@@ -61,6 +61,7 @@ def create_app() -> FastAPI:
     @app.get("/calls/{call_id}/status")
     async def get_call_status(call_id: str):
         from ..pipeline.tasks import get_call_result
+
         result = get_call_result(call_id)
         if "error" in result and result["error"] == "call_not_found":
             raise HTTPException(status_code=404, detail="Call not found")

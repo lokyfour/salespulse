@@ -20,11 +20,25 @@ from ..transcript.models import Transcript
 @dataclass
 class MetricsConfig:
     competitor_names: list[str] = field(default_factory=list)
-    next_step_phrases: list[str] = field(default_factory=lambda: [
-        "follow up", "send over", "schedule", "tuesday", "monday", "friday",
-        "thursday", "wednesday", "next week", "i'll send", "let's connect",
-        "book a call", "calendar invite", "i will send", "set up a call",
-    ])
+    next_step_phrases: list[str] = field(
+        default_factory=lambda: [
+            "follow up",
+            "send over",
+            "schedule",
+            "tuesday",
+            "monday",
+            "friday",
+            "thursday",
+            "wednesday",
+            "next week",
+            "i'll send",
+            "let's connect",
+            "book a call",
+            "calendar invite",
+            "i will send",
+            "set up a call",
+        ]
+    )
 
 
 @dataclass

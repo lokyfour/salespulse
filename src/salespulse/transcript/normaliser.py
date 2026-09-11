@@ -18,12 +18,17 @@ from uuid import UUID
 
 from .models import Transcript, Turn, Word
 
-
 MAX_SILENCE_S = 1.0
 
-FILLER_WORDS = frozenset({
-    "uh", "um", "er", "ah", "hmm",
-})
+FILLER_WORDS = frozenset(
+    {
+        "uh",
+        "um",
+        "er",
+        "ah",
+        "hmm",
+    }
+)
 
 
 @dataclass
@@ -60,13 +65,15 @@ def normalise_from_fixture(fixture_path: Path, call_id: UUID) -> Transcript:
             )
             for w in t.get("words", [])
         ]
-        turns.append(Turn(
-            speaker=t["speaker"],
-            start=t["start"],
-            end=t["end"],
-            text=t["text"],
-            words=words,
-        ))
+        turns.append(
+            Turn(
+                speaker=t["speaker"],
+                start=t["start"],
+                end=t["end"],
+                text=t["text"],
+                words=words,
+            )
+        )
 
     return Transcript(
         call_id=call_id,
@@ -102,25 +109,29 @@ def normalise(
             text = aw.word
             if config.strip_fillers and text.lower() in FILLER_WORDS:
                 continue
-            word_objects.append(Word(
-                text=text,
-                start=aw.start,
-                end=aw.end,
-                confidence=aw.confidence,
-                speaker=speaker,
-            ))
+            word_objects.append(
+                Word(
+                    text=text,
+                    start=aw.start,
+                    end=aw.end,
+                    confidence=aw.confidence,
+                    speaker=speaker,
+                )
+            )
 
         if not word_objects:
             continue
 
         turn_text = " ".join(w.text for w in word_objects)
-        turns.append(Turn(
-            speaker=speaker,
-            start=attributed_words[0].start,
-            end=attributed_words[-1].end,
-            text=turn_text,
-            words=word_objects,
-        ))
+        turns.append(
+            Turn(
+                speaker=speaker,
+                start=attributed_words[0].start,
+                end=attributed_words[-1].end,
+                text=turn_text,
+                words=word_objects,
+            )
+        )
 
     return Transcript(
         call_id=call_id,

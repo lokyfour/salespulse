@@ -12,13 +12,13 @@ Key schema:
 from __future__ import annotations
 
 import os
-from enum import Enum
+from enum import StrEnum
 from uuid import UUID
 
 import redis
 
 
-class PipelineStage(str, Enum):
+class PipelineStage(StrEnum):
     QUEUED = "queued"
     TRANSCRIBING = "transcribing"
     DIARIZING = "diarizing"
@@ -76,10 +76,7 @@ def advance(call_id: UUID, stage: PipelineStage) -> None:
 
     expected_next = TRANSITIONS.get(current)
     if expected_next != stage:
-        raise ValueError(
-            f"Invalid transition {current} → {stage}. "
-            f"Expected next: {expected_next}"
-        )
+        raise ValueError(f"Invalid transition {current} → {stage}. Expected next: {expected_next}")
     client.set(key, stage.value)
 
 

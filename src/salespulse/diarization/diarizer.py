@@ -23,8 +23,9 @@ from pathlib import Path
 @dataclass
 class DiarizedSegment:
     """A time segment attributed to a single speaker."""
-    speaker_id: str   # "SPEAKER_00", "SPEAKER_01", etc.
-    start: float      # seconds
+
+    speaker_id: str  # "SPEAKER_00", "SPEAKER_01", etc.
+    start: float  # seconds
     end: float
 
 

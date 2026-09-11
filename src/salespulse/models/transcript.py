@@ -15,8 +15,8 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import String, DateTime, Float, Integer, Text, ForeignKey, func
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text, func
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .call import Base
@@ -40,12 +40,11 @@ class Transcript(Base):
     asr_provider: Mapped[str] = mapped_column(String(50), nullable=False)
     rep_speaker_id: Mapped[str] = mapped_column(String(50), nullable=False)
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    turns: Mapped[list["Turn"]] = relationship(
-        "Turn", back_populates="transcript",
+    turns: Mapped[list[Turn]] = relationship(
+        "Turn",
+        back_populates="transcript",
         order_by="Turn.position",
         cascade="all, delete-orphan",
     )
@@ -61,7 +60,7 @@ class Turn(Base):
         nullable=False,
         index=True,
     )
-    position: Mapped[int] = mapped_column(Integer, nullable=False)   # order in transcript
+    position: Mapped[int] = mapped_column(Integer, nullable=False)  # order in transcript
     speaker: Mapped[str] = mapped_column(String(100), nullable=False)  # "rep" | "prospect"
     start: Mapped[float] = mapped_column(Float, nullable=False)
     end: Mapped[float] = mapped_column(Float, nullable=False)
@@ -70,4 +69,4 @@ class Turn(Base):
     # Words stored as [{word, start, end, confidence}] — avoids O(N) join
     words: Mapped[list | None] = mapped_column(JSONB, nullable=True)
 
-    transcript: Mapped["Transcript"] = relationship("Transcript", back_populates="turns")
+    transcript: Mapped[Transcript] = relationship("Transcript", back_populates="turns")

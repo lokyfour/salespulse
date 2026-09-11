@@ -12,9 +12,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from uuid import UUID
 
-from .rubric import RubricConfig
-from .evidence import verify_evidence
 from ..transcript.models import Transcript
+from .evidence import verify_evidence
+from .rubric import RubricConfig
 
 
 @dataclass
@@ -52,10 +52,7 @@ class Scorecard:
     @property
     def overall_score(self) -> int:
         """Weighted sum normalised to 0–100."""
-        total = sum(
-            (cs.score / 3.0) * cs.weight
-            for cs in self.criteria_scores
-        )
+        total = sum((cs.score / 3.0) * cs.weight for cs in self.criteria_scores)
         return round(total)
 
     @property
@@ -63,28 +60,20 @@ class Scorecard:
         flags = []
         for cs in self.criteria_scores:
             if cs.score == 0 and cs.flag:
-                flags.append(
-                    f"{cs.label} not identified — {cs.flag}"
-                )
+                flags.append(f"{cs.label} not identified — {cs.flag}")
             elif cs.score == 1:
-                flags.append(
-                    f"{cs.label} score 1/3 — needs development"
-                )
+                flags.append(f"{cs.label} score 1/3 — needs development")
         m = self.conversation_metrics
         if m.talk_ratio_flag == "too_high":
             flags.append(
-                f"Rep talk ratio {m.talk_ratio:.0%} — above 55% threshold; "
-                "ask more open questions"
+                f"Rep talk ratio {m.talk_ratio:.0%} — above 55% threshold; ask more open questions"
             )
         elif m.talk_ratio_flag == "too_low":
             flags.append(
-                f"Rep talk ratio {m.talk_ratio:.0%} — below 20%; "
-                "consider more active guidance"
+                f"Rep talk ratio {m.talk_ratio:.0%} — below 20%; consider more active guidance"
             )
         if not m.next_step_confirmed:
-            flags.append(
-                "No next step confirmed — call ended without a specific follow-up"
-            )
+            flags.append("No next step confirmed — call ended without a specific follow-up")
         return flags
 
 
@@ -106,7 +95,7 @@ def build_scorecard(
     Returns:
         Validated Scorecard.
     """
-    rubric_criterion_ids = {c.id for c in rubric.criteria}
+    {c.id for c in rubric.criteria}
 
     criteria_scores: list[CriterionScore] = []
     for raw_cs in raw_dict.get("criteria_scores", []):
@@ -135,29 +124,33 @@ def build_scorecard(
                 if criterion.evidence_required:
                     score = 0
 
-        criteria_scores.append(CriterionScore(
-            criterion_id=cid,
-            label=criterion.label,
-            score=score,
-            weight=criterion.weight,
-            evidence=evidence,
-            timestamp=timestamp,
-            flag=flag,
-        ))
+        criteria_scores.append(
+            CriterionScore(
+                criterion_id=cid,
+                label=criterion.label,
+                score=score,
+                weight=criterion.weight,
+                evidence=evidence,
+                timestamp=timestamp,
+                flag=flag,
+            )
+        )
 
     # Ensure every rubric criterion has a score entry (fill missing with 0)
     scored_ids = {cs.criterion_id for cs in criteria_scores}
     for criterion in rubric.criteria:
         if criterion.id not in scored_ids:
-            criteria_scores.append(CriterionScore(
-                criterion_id=criterion.id,
-                label=criterion.label,
-                score=0,
-                weight=criterion.weight,
-                evidence=None,
-                timestamp=None,
-                flag="not_scored_by_llm",
-            ))
+            criteria_scores.append(
+                CriterionScore(
+                    criterion_id=criterion.id,
+                    label=criterion.label,
+                    score=0,
+                    weight=criterion.weight,
+                    evidence=None,
+                    timestamp=None,
+                    flag="not_scored_by_llm",
+                )
+            )
 
     # Conversation metrics
     raw_m = raw_dict.get("conversation_metrics", {})

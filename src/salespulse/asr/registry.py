@@ -17,11 +17,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from .base import ASRProvider
-from .whisper_provider import WhisperLocalProvider
-from .deepgram_provider import DeepgramProvider
 from .assemblyai_provider import AssemblyAIProvider
-
+from .base import ASRProvider
+from .deepgram_provider import DeepgramProvider
+from .whisper_provider import WhisperLocalProvider
 
 _REGISTRY: dict[str, type[ASRProvider]] = {
     "whisper_local": WhisperLocalProvider,

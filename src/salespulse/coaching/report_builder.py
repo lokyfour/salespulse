@@ -15,7 +15,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -29,10 +28,10 @@ class CoachingReport:
     generated_at: datetime
     calls_analysed: int
     average_overall_score: float
-    score_trend_direction: str      # "improving" | "declining" | "stable"
+    score_trend_direction: str  # "improving" | "declining" | "stable"
     flags: list[CoachingFlag]
-    top_strength: str | None        # Criterion with highest average score
-    top_weakness: str | None        # Criterion with lowest average score
+    top_strength: str | None  # Criterion with highest average score
+    top_weakness: str | None  # Criterion with lowest average score
     recommended_actions: list[str] = field(default_factory=list)
 
 
@@ -42,8 +41,8 @@ class TeamCoachingReport:
     generated_at: datetime
     rep_count: int
     average_overall_score: float
-    underperformers: list[str]       # rep_ids below threshold
-    top_performers: list[str]        # rep_ids above 80
+    underperformers: list[str]  # rep_ids below threshold
+    top_performers: list[str]  # rep_ids above 80
     top_objections: list[str]
     competitor_leaderboard: list[tuple[str, int]]  # (competitor, mention_count)
 

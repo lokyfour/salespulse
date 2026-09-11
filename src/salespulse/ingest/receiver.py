@@ -21,28 +21,24 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models.call import Call
-from .deduplicator import Deduplicator
-from .audio_validator import AudioValidator
-
 
 class CallEnqueueResult:
     """Returned to the API layer after a call is accepted for processing."""
 
     call_id: UUID
-    status: str           # "queued" | "duplicate" | "rejected"
+    status: str  # "queued" | "duplicate" | "rejected"
     rejection_reason: str | None
 
 
 class CRMWebhookPayload:
     """Normalised payload from any supported CRM recording webhook."""
 
-    crm_type: str          # "hubspot" | "salesforce" | "pipedrive"
+    crm_type: str  # "hubspot" | "salesforce" | "pipedrive"
     crm_deal_id: str
     recording_url: str
     rep_email: str | None
     duration_seconds: int | None
-    raw: dict              # Original webhook body for audit
+    raw: dict  # Original webhook body for audit
 
 
 class TwilioRecordingPayload:

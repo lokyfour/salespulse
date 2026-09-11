@@ -19,7 +19,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date
-from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -37,7 +36,7 @@ class RepHistory:
     rep_id: str
     scorecards: list[Scorecard]
     average_overall_score: float
-    score_trend: float          # Positive = improving, negative = declining
+    score_trend: float  # Positive = improving, negative = declining
     per_criterion_averages: dict[str, float] = field(default_factory=dict)
     most_missed_criterion: str | None = None
     top_objections: list[str] = field(default_factory=list)

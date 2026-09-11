@@ -20,14 +20,14 @@ from dataclasses import dataclass
 
 @dataclass
 class TrendResult:
-    direction: str       # "improving" | "declining" | "stable"
-    slope: float         # Points per call (linear regression)
-    r_squared: float     # Fit quality 0.0 – 1.0; low = noisy
+    direction: str  # "improving" | "declining" | "stable"
+    slope: float  # Points per call (linear regression)
+    r_squared: float  # Fit quality 0.0 – 1.0; low = noisy
 
 
 @dataclass
 class WeeklyDelta:
-    week_label: str      # e.g. "2026-W36"
+    week_label: str  # e.g. "2026-W36"
     average_score: float
     call_count: int
     delta_from_prior: float | None  # None for first week

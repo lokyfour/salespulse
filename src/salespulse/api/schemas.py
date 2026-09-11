@@ -14,19 +14,21 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-
 # ──────────────────────────────────────────────────────────────────────
 # Request schemas
 # ──────────────────────────────────────────────────────────────────────
 
+
 class UploadMetadata(BaseModel):
     """Form fields accompanying a file upload."""
+
     rep_id: str = Field(..., description="Internal rep identifier")
     crm_deal_id: str | None = Field(None, description="CRM deal ID for result sync")
 
 
 class CRMWebhookRequest(BaseModel):
     """Normalised webhook payload from a CRM recording event."""
+
     crm_type: str
     crm_deal_id: str
     recording_url: str
@@ -38,15 +40,16 @@ class CRMWebhookRequest(BaseModel):
 # Response schemas
 # ──────────────────────────────────────────────────────────────────────
 
+
 class CallEnqueueResponse(BaseModel):
     call_id: UUID
-    status: str              # "queued" | "duplicate" | "rejected"
+    status: str  # "queued" | "duplicate" | "rejected"
     rejection_reason: str | None = None
 
 
 class CallStatusResponse(BaseModel):
     call_id: UUID
-    stage: str               # PipelineStage value
+    stage: str  # PipelineStage value
     overall_score: int | None = None
     scorecard_url: str | None = None
     error_message: str | None = None
@@ -105,7 +108,7 @@ class TeamReportResponse(BaseModel):
 
 
 class HealthResponse(BaseModel):
-    status: str              # "ok" | "degraded"
+    status: str  # "ok" | "degraded"
     workers: int
-    queue: str               # "idle" | "busy" | "unavailable"
-    db: str                  # "ok" | "unavailable"
+    queue: str  # "idle" | "busy" | "unavailable"
+    db: str  # "ok" | "unavailable"

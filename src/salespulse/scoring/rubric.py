@@ -25,6 +25,7 @@ from pathlib import Path
 @dataclass
 class ScoringGuide:
     """Maps integer score levels to plain-English descriptions."""
+
     level_0: str
     level_1: str
     level_2: str
@@ -35,7 +36,7 @@ class ScoringGuide:
 class Criterion:
     id: str
     label: str
-    weight: int                     # Percentage of overall score (0–100)
+    weight: int  # Percentage of overall score (0–100)
     description: str
     evidence_required: bool
     scoring_guide: ScoringGuide
@@ -45,7 +46,7 @@ class Criterion:
 class ConversationMetric:
     id: str
     label: str
-    type: str                       # "range" | "boolean" | "count" | "list"
+    type: str  # "range" | "boolean" | "count" | "list"
     target_range: tuple[float, float] | None = None
     flag_above: float | None = None
     flag_below: float | None = None
@@ -55,7 +56,7 @@ class ConversationMetric:
 @dataclass
 class RubricConfig:
     name: str
-    methodology: str                # "meddic" | "bant" | "custom"
+    methodology: str  # "meddic" | "bant" | "custom"
     version: str
     criteria: list[Criterion] = field(default_factory=list)
     conversation_metrics: list[ConversationMetric] = field(default_factory=list)
@@ -99,36 +100,41 @@ def load_rubric(path: Path) -> RubricConfig:
     criteria: list[Criterion] = []
     for c in raw.get("criteria", []):
         sg = c.get("scoring_guide", {})
+
         # YAML keys may be ints or strings depending on quoting
         def sg_level(level: int) -> str:
             return str(sg.get(level, sg.get(str(level), "")))
 
-        criteria.append(Criterion(
-            id=c["id"],
-            label=c["label"],
-            weight=int(c["weight"]),
-            description=str(c.get("description", "")).strip(),
-            evidence_required=bool(c.get("evidence_required", False)),
-            scoring_guide=ScoringGuide(
-                level_0=sg_level(0),
-                level_1=sg_level(1),
-                level_2=sg_level(2),
-                level_3=sg_level(3),
-            ),
-        ))
+        criteria.append(
+            Criterion(
+                id=c["id"],
+                label=c["label"],
+                weight=int(c["weight"]),
+                description=str(c.get("description", "")).strip(),
+                evidence_required=bool(c.get("evidence_required", False)),
+                scoring_guide=ScoringGuide(
+                    level_0=sg_level(0),
+                    level_1=sg_level(1),
+                    level_2=sg_level(2),
+                    level_3=sg_level(3),
+                ),
+            )
+        )
 
     metrics: list[ConversationMetric] = []
     for m in raw.get("conversation_metrics", []):
         tr = m.get("target_range")
-        metrics.append(ConversationMetric(
-            id=m["id"],
-            label=m.get("label", m["id"]),
-            type=m.get("type", "count"),
-            target_range=tuple(tr) if tr else None,
-            flag_above=m.get("flag_above"),
-            flag_below=m.get("flag_below"),
-            description=str(m.get("description", "")).strip(),
-        ))
+        metrics.append(
+            ConversationMetric(
+                id=m["id"],
+                label=m.get("label", m["id"]),
+                type=m.get("type", "count"),
+                target_range=tuple(tr) if tr else None,
+                flag_above=m.get("flag_above"),
+                flag_below=m.get("flag_below"),
+                description=str(m.get("description", "")).strip(),
+            )
+        )
 
     rubric = RubricConfig(
         name=raw.get("name", "Custom"),

@@ -37,8 +37,11 @@ def verify_evidence(
     """
     if not quote:
         return EvidenceVerification(
-            quote=quote, verified=False, match_score=0.0,
-            matched_turn=None, resolved_seconds=None,
+            quote=quote,
+            verified=False,
+            match_score=0.0,
+            matched_turn=None,
+            resolved_seconds=None,
         )
 
     quote_tokens = _tokenise(quote)

@@ -7,6 +7,7 @@ Celery application factory.
 from __future__ import annotations
 
 import os
+
 from celery import Celery
 
 
@@ -31,8 +32,8 @@ def create_celery_app() -> Celery:
             "salespulse.generate_coaching": {"queue": "coaching"},
             "salespulse.push_to_crm": {"queue": "crm_push"},
         },
-        task_acks_late=True,          # Re-queue task if worker dies mid-execution
-        worker_prefetch_multiplier=1, # One task at a time for CPU-heavy ASR worker
+        task_acks_late=True,  # Re-queue task if worker dies mid-execution
+        worker_prefetch_multiplier=1,  # One task at a time for CPU-heavy ASR worker
     )
 
     # Auto-discover tasks in pipeline.tasks

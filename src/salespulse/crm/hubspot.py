@@ -24,10 +24,9 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from .base import CRMAdapter, CRMPushResult
-from ..scoring.scorecard import Scorecard
 from ..coaching.pattern_detector import CoachingFlag
-
+from ..scoring.scorecard import Scorecard
+from .base import CRMAdapter, CRMPushResult
 
 HUBSPOT_BASE_URL = "https://api.hubapi.com"
 

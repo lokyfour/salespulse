@@ -16,17 +16,8 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from celery import chain as celery_chain
 from celery.result import AsyncResult
 
-from .tasks import (
-    transcribe_audio,
-    diarize_audio,
-    normalise_transcript,
-    score_transcript,
-    generate_coaching,
-    push_to_crm,
-)
 from .state import PipelineStage
 
 

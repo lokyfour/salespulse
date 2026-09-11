@@ -15,15 +15,16 @@ Interface:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 
 @dataclass
 class WordToken:
     """A single recognised word with timing metadata."""
+
     word: str
-    start: float      # seconds from call start
+    start: float  # seconds from call start
     end: float
     confidence: float  # 0.0 – 1.0
 
@@ -34,18 +35,19 @@ class RawTranscript:
     Provider-agnostic output from ASR. Contains word-level tokens but
     no speaker information — diarization is a separate stage.
     """
+
     text: str
     words: list[WordToken]
-    language: str        # ISO 639-1 detected language
-    duration: float      # total audio duration in seconds
-    provider: str        # name of the provider that produced this
+    language: str  # ISO 639-1 detected language
+    duration: float  # total audio duration in seconds
+    provider: str  # name of the provider that produced this
 
 
 @dataclass
 class ASRConfig:
-    language: str | None = None   # None = auto-detect
+    language: str | None = None  # None = auto-detect
     model: str = "large-v3"
-    compute_type: str = "int8"    # float32 | int8
+    compute_type: str = "int8"  # float32 | int8
 
 
 class ASRProvider(ABC):
@@ -80,4 +82,5 @@ class ASRProvider(ABC):
 
 class ASRError(Exception):
     """Raised when the ASR provider fails to transcribe."""
+
     pass

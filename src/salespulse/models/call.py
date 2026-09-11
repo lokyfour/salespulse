@@ -14,7 +14,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import String, DateTime, Integer, func
+from sqlalchemy import DateTime, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -37,9 +37,7 @@ class Call(Base):
     crm_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
 
     # Pipeline state
-    stage: Mapped[str] = mapped_column(
-        String(50), nullable=False, default="queued", index=True
-    )
+    stage: Mapped[str] = mapped_column(String(50), nullable=False, default="queued", index=True)
     failed_at_stage: Mapped[str | None] = mapped_column(String(50), nullable=True)
     error_message: Mapped[str | None] = mapped_column(String(2048), nullable=True)
 
@@ -49,14 +47,10 @@ class Call(Base):
     asr_provider: Mapped[str | None] = mapped_column(String(50), nullable=True)
 
     # Timestamps
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
     # GDPR erasure flag
-    erased_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    erased_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

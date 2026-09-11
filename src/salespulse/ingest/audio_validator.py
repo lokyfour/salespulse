@@ -19,7 +19,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-
 SUPPORTED_FORMATS = {"mp3", "wav", "ogg", "m4a", "flac", "webm"}
 
 

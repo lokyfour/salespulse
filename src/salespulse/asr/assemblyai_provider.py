@@ -17,11 +17,10 @@ from pathlib import Path
 
 from .base import ASRConfig, ASRProvider, RawTranscript
 
-
 ASSEMBLYAI_UPLOAD_URL = "https://api.assemblyai.com/v2/upload"
 ASSEMBLYAI_TRANSCRIPT_URL = "https://api.assemblyai.com/v2/transcript"
 POLL_INTERVAL_SECONDS = 5
-MAX_POLL_ATTEMPTS = 120   # 10 minutes before timeout
+MAX_POLL_ATTEMPTS = 120  # 10 minutes before timeout
 
 
 class AssemblyAIProvider(ASRProvider):

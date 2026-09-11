@@ -17,14 +17,14 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from fastapi import APIRouter, UploadFile, Form, Depends
+from fastapi import APIRouter, Depends, Form, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..schemas import (
     CallEnqueueResponse,
     CallStatusResponse,
-    ScorecardResponse,
     CRMWebhookRequest,
+    ScorecardResponse,
 )
 
 router = APIRouter(prefix="/calls", tags=["calls"])
@@ -35,7 +35,7 @@ async def upload_call(
     file: UploadFile,
     rep_id: str = Form(...),
     crm_deal_id: str | None = Form(None),
-    session: AsyncSession = Depends(lambda: None),   # replaced by DI in app.py
+    session: AsyncSession = Depends(lambda: None),  # replaced by DI in app.py
 ) -> CallEnqueueResponse:
     """
     Accept a call recording file, validate, deduplicate, and enqueue.
