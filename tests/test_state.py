@@ -9,9 +9,8 @@ from __future__ import annotations
 
 import uuid
 
-import pytest
-
 import fakeredis
+import pytest
 
 from salespulse.pipeline import state
 

@@ -11,8 +11,6 @@ import json
 import uuid
 from pathlib import Path
 
-import pytest
-
 from salespulse.scoring.scorecard import build_scorecard
 
 
@@ -27,6 +25,7 @@ def _raw(criterion_id, score, evidence=None, timestamp=None, flag=None):
 
 
 # ── Fixture sanity checks ───────────────────────────────────────────────
+
 
 def test_expected_scorecard_fixture_exists():
     path = Path(__file__).parent / "fixtures" / "expected_scorecard.json"
@@ -59,6 +58,7 @@ def test_expected_scorecard_has_coaching_flags():
 
 
 # ── build_scorecard: score handling ─────────────────────────────────────
+
 
 def test_null_score_does_not_crash(rubric):
     raw_dict = {
@@ -186,15 +186,16 @@ def test_all_rubric_criteria_present_in_output(rubric):
 
 # ── overall_score / coaching_flags ──────────────────────────────────────
 
+
 def test_overall_score_calculation_correct(rubric):
     raw_dict = {
         "criteria_scores": [
-            _raw("metrics", 2, evidence="x", timestamp="00:00"),       # weight 20
+            _raw("metrics", 2, evidence="x", timestamp="00:00"),  # weight 20
             _raw("economic_buyer", 3, evidence="x", timestamp="00:00"),  # weight 20
             _raw("decision_criteria", 1, evidence="x", timestamp="00:00"),  # weight 15
-            _raw("decision_process", 2),                                 # weight 15
-            _raw("identify_pain", 3, evidence="x", timestamp="00:00"),   # weight 15
-            _raw("champion", 0),                                         # weight 15
+            _raw("decision_process", 2),  # weight 15
+            _raw("identify_pain", 3, evidence="x", timestamp="00:00"),  # weight 15
+            _raw("champion", 0),  # weight 15
         ],
         "conversation_metrics": {},
         "overall_notes": "",

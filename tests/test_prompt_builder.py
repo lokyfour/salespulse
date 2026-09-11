@@ -38,7 +38,7 @@ def test_evidence_required_marked_in_prompt(sample_transcript, rubric):
     assert required_labels, "fixture rubric should have at least one evidence_required criterion"
     for label in required_labels:
         idx = user_prompt.index(label)
-        line = user_prompt[idx: idx + 200].splitlines()[0]
+        line = user_prompt[idx : idx + 200].splitlines()[0]
         assert "[EVIDENCE REQUIRED]" in line
 
 

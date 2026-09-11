@@ -6,7 +6,6 @@ Shared fixtures for the salespulse test suite.
 
 from __future__ import annotations
 
-import copy
 import uuid
 from pathlib import Path
 
@@ -29,9 +28,7 @@ def sample_transcript():
     """Canonical Transcript built from tests/fixtures/sample_transcript.json."""
     from salespulse.transcript.normaliser import normalise_from_fixture
 
-    return normalise_from_fixture(
-        FIXTURES_DIR / "sample_transcript.json", uuid.uuid4()
-    )
+    return normalise_from_fixture(FIXTURES_DIR / "sample_transcript.json", uuid.uuid4())
 
 
 @pytest.fixture

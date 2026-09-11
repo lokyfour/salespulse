@@ -8,8 +8,6 @@ from __future__ import annotations
 
 import uuid
 
-import pytest
-
 from salespulse.scoring.metrics import (
     ComputedMetrics,
     MetricsConfig,
@@ -50,7 +48,12 @@ def test_next_step_detected():
     turns = [
         _turn("rep", 0.0, 5.0, "let's get started"),
         _turn("prospect", 5.0, 10.0, "sounds good"),
-        _turn("rep", 10.0, 15.0, "great, I'll send over the proposal and let's schedule a call Thursday"),
+        _turn(
+            "rep",
+            10.0,
+            15.0,
+            "great, I'll send over the proposal and let's schedule a call Thursday",
+        ),
     ]
     t = _transcript(turns, duration_seconds=15.0)
     metrics = compute_metrics(t, MetricsConfig())

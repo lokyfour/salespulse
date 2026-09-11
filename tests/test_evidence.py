@@ -42,9 +42,7 @@ def _transcript(duration_seconds=200.0):
 
 def test_exact_quote_verified():
     t = _transcript()
-    result = verify_evidence(
-        "close rate dropped from 28 to 19 percent over six months", t
-    )
+    result = verify_evidence("close rate dropped from 28 to 19 percent over six months", t)
     assert result.verified is True
     assert result.matched_turn is not None
     assert result.resolved_seconds == 15.0
@@ -53,9 +51,7 @@ def test_exact_quote_verified():
 def test_close_quote_above_threshold_verified():
     t = _transcript()
     # Minor transcription variant — drops one word, still >= 0.75 overlap.
-    result = verify_evidence(
-        "close rate dropped from 28 to 19 percent over months", t
-    )
+    result = verify_evidence("close rate dropped from 28 to 19 percent over months", t)
     assert result.verified is True
 
 

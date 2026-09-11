@@ -5,6 +5,7 @@ Tests for CRM adapter registry and stub behaviour.
 """
 
 import pytest
+
 from salespulse.crm.registry import CRMRegistry
 
 
@@ -27,5 +28,6 @@ def test_registry_unknown_adapter_raises_key_error():
 
 def test_asr_registry_lists_all_providers():
     from salespulse.asr.registry import ASRRegistry
+
     providers = ASRRegistry.available()
     assert set(providers) == {"whisper_local", "deepgram", "assemblyai"}

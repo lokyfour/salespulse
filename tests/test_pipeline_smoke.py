@@ -18,8 +18,6 @@ tests without a running worker or broker.
 from __future__ import annotations
 
 import copy
-import importlib
-import os
 import uuid
 
 import fakeredis
